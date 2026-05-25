@@ -29,15 +29,21 @@ async function post(payload) {
   if (CONFIG.backendUrl === '__SET_BACKEND_URL__') {
     throw new Error('BACKEND_URL_NOT_SET')
   }
-  const res = await fetch(CONFIG.backendUrl, {
-    method:  'POST',
-    headers: { 'Content-Type': 'text/plain' },
-    body:    JSON.stringify(payload),
-  })
-  if (!res.ok) throw new Error(`HTTP ${res.status}`)
-  const text = await res.text()
-  try   { return JSON.parse(text) }
-  catch { return { success: true, raw: text } }
+  try {
+    const res = await fetch(CONFIG.backendUrl, {
+      method:   'POST',
+      headers:  { 'Content-Type': 'text/plain' },
+      body:     JSON.stringify(payload),
+      redirect: 'follow',
+    })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    const text = await res.text()
+    try   { return JSON.parse(text) }
+    catch { return { success: true, raw: text } }
+  } catch (err) {
+    console.error(`[NeuralPath] ${payload.action} failed:`, err.message)
+    throw err
+  }
 }
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────

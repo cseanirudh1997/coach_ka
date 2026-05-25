@@ -186,11 +186,12 @@ function OverviewPanel({ session, progress, insights, metrics }) {
           transition={{ delay: 0.4 }}
           className="glass p-6 grid grid-cols-2 sm:grid-cols-4 gap-4"
         >
+          {/* Backend spec: date | activeStudents | mockInterviews | mentorshipCalls | placements */}
           {[
-            { label: 'Engineers Placed',   value: `${metrics.totalStudents?.toLocaleString('en-IN')}+` },
-            { label: 'Placement Rate',     value: `${metrics.placementRate}%` },
-            { label: 'Avg Salary Hike',    value: `${metrics.avgSalaryHike}x` },
-            { label: 'Mock Interviews',    value: `${(metrics.mockInterviews || 0).toLocaleString('en-IN')}+` },
+            { label: 'Active Students',    value: `${(metrics.activeStudents  ?? 0).toLocaleString('en-IN')}+` },
+            { label: 'Placements',         value: `${(metrics.placements      ?? 0).toLocaleString('en-IN')}+` },
+            { label: 'Mock Interviews',    value: `${(metrics.mockInterviews  ?? 0).toLocaleString('en-IN')}+` },
+            { label: 'Mentorship Calls',   value: `${(metrics.mentorshipCalls ?? 0).toLocaleString('en-IN')}+` },
           ].map(s => (
             <div key={s.label} className="text-center">
               <div className="text-xl font-bold gradient-text">{s.value}</div>
