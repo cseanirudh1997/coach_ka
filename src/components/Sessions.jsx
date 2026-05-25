@@ -78,9 +78,11 @@ function SessionCard({ s, index, onRegister, booked }) {
               <Clock className="w-3.5 h-3.5" /> {s.duration}
             </span>
           )}
-          <span className="flex items-center gap-1">
-            <Users className="w-3.5 h-3.5" /> {s.enrolled} enrolled
-          </span>
+          {s.enrolled != null && (
+            <span className="flex items-center gap-1">
+              <Users className="w-3.5 h-3.5" /> {s.enrolled} enrolled
+            </span>
+          )}
         </div>
       </div>
 

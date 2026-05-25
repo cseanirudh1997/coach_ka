@@ -40,11 +40,12 @@ export default function Hero({ session }) {
       .catch(() => {})
   }, [session])
 
+  // Backend spec: date | activeStudents | mockInterviews | mentorshipCalls | placements
   const badges = metrics ? [
-    { icon: Users,     value: `${metrics.totalStudents?.toLocaleString('en-IN')}+`, label: 'Engineers Placed'  },
-    { icon: TrendingUp, value: `${metrics.avgSalaryHike}x`,                         label: 'Avg Salary Hike'  },
-    { icon: Star,      value: `${metrics.avgRating}/5`,                              label: 'Mentor Rating'    },
-    { icon: Award,     value: `${metrics.placementRate}%`,                           label: 'Placement Rate'   },
+    { icon: Users,      value: `${(metrics.activeStudents ?? 0).toLocaleString('en-IN')}+`, label: 'Active Students'   },
+    { icon: Award,      value: `${(metrics.placements    ?? 0).toLocaleString('en-IN')}+`, label: 'Engineers Placed'  },
+    { icon: TrendingUp, value: `${(metrics.mockInterviews ?? 0).toLocaleString('en-IN')}+`, label: 'Mock Interviews'   },
+    { icon: Star,       value: `${(metrics.mentorshipCalls ?? 0).toLocaleString('en-IN')}+`, label: 'Mentorship Calls' },
   ] : TRUST_BADGES_DEFAULT
 
   const banner = config?.announcementBanner
