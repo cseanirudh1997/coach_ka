@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Zap, TrendingUp, BarChart2, DollarSign, Loader2, AlertCircle } from 'lucide-react'
+import { Zap, TrendingUp, BarChart2, DollarSign, Loader2, AlertCircle, LayoutDashboard, UserPlus } from 'lucide-react'
 import { getAIInsights } from '../api.js'
 
 const SEVERITY_STYLES = {
@@ -40,7 +41,7 @@ function InsightCard({ item, index }) {
   )
 }
 
-export default function AIInsights() {
+export default function AIInsights({ session }) {
   const [insights, setInsights] = useState([])
   const [loading,  setLoading]  = useState(true)
 
@@ -141,11 +142,19 @@ export default function AIInsights() {
           className="mt-12 text-center"
         >
           <p className="text-white/40 text-sm mb-4">
-            Get personalized insights in your dashboard after enrolling in a program.
+            {session
+              ? 'View your personalized AI insights and progress in your dashboard.'
+              : 'Get personalized insights in your dashboard after enrolling in a program.'}
           </p>
-          <a href="/signup" className="btn-brand inline-flex">
-            Start Free — Get Your Roadmap <Zap className="w-4 h-4 ml-1" fill="currentColor" />
-          </a>
+          {session ? (
+            <Link to="/dashboard" className="btn-brand inline-flex">
+              <LayoutDashboard className="w-4 h-4" /> Go to Dashboard
+            </Link>
+          ) : (
+            <Link to="/signup" className="btn-brand inline-flex">
+              Start Free — Get Your Roadmap <Zap className="w-4 h-4 ml-1" fill="currentColor" />
+            </Link>
+          )}
         </motion.div>
       </div>
     </section>

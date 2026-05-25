@@ -44,17 +44,19 @@ export default function Contact() {
     setLoading(true)
     try {
       if (CONFIG.backendUrl !== '__SET_BACKEND_URL__') {
-        await fetch(CONFIG.backendUrl, {
-          method:  'POST',
-          headers: { 'Content-Type': 'text/plain' },
-          body:    JSON.stringify({ action: 'contact', ...form }),
+        const res = await fetch(CONFIG.backendUrl, {
+          method:   'POST',
+          headers:  { 'Content-Type': 'text/plain' },
+          body:     JSON.stringify({ action: 'contact', ...form }),
+          redirect: 'follow',
         })
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
       }
       setSent(true)
       toast.success('Consultation booked! Our team will reach out within 24 hours.')
-    } catch {
-      setSent(true)
-      toast.success('Request received! A FAANG mentor will contact you shortly.')
+    } catch (err) {
+      console.error('[NeuralPath] contact submission failed:', err.message)
+      toast.error('Could not submit. Please email us directly or try again.')
     } finally {
       setLoading(false)
     }

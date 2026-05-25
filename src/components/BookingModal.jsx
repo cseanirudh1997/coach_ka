@@ -55,13 +55,17 @@ export default function BookingModal({ program, session, onClose }) {
     }
     setBooking(true)
     try {
-      // Create booking record first — pass both userId and username (canonical)
-      await createBooking({
+      // Create booking record first — writes to Bookings sheet via GAS backend
+      const bookingRes = await createBooking({
         userId:    session.userId,
         username:  session.username,
         programId,
         coupon:    couponRes?.valid ? coupon : undefined,
       })
+      if (!bookingRes?.success) {
+        toast.error(bookingRes?.message || 'Booking could not be saved. Please try again.')
+        return
+      }
 
       // Use paymentUrl (canonical backend field); fallback to url for compatibility
       openPayment({
