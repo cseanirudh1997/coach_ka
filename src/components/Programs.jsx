@@ -5,23 +5,31 @@ import { getPrograms } from '../api.js'
 import { formatCurrency } from '../utils.js'
 import BookingModal from './BookingModal.jsx'
 
-const ICON_MAP = {
-  brain:    '🧠',
-  chart:    '📊',
-  sparkles: '✨',
-  target:   '🎯',
+const CATEGORY_ICONS = {
+  'Visa Consulting':    '🛂',
+  'IELTS Coaching':     '🎧',
+  'GRE Coaching':       '📐',
+  'Admissions':         '🎓',
+  'SOP & LOR':          '✍️',
+  'Scholarship':        '🏆',
+  'University Shortlist': '🔍',
 }
 
 const CATEGORY_COLORS = {
-  'Interview Prep': 'text-rose-400 bg-rose-500/10 border-rose-500/30',
-  'GenAI':          'text-amber-400 bg-amber-500/10 border-amber-500/30',
-  'System Design':  'text-blue-400 bg-blue-500/10 border-blue-500/30',
-  'Leadership':     'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
+  'Visa Consulting':    'text-blue-400   bg-blue-500/10   border-blue-500/30',
+  'IELTS Coaching':     'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
+  'GRE Coaching':       'text-violet-400 bg-violet-500/10 border-violet-500/30',
+  'Admissions':         'text-amber-400  bg-amber-500/10  border-amber-500/30',
+  'SOP & LOR':          'text-pink-400   bg-pink-500/10   border-pink-500/30',
+  'Scholarship':        'text-sky-400    bg-sky-500/10    border-sky-500/30',
+  'University Shortlist': 'text-rose-400 bg-rose-500/10  border-rose-500/30',
 }
 
 function ProgramCard({ program, index, onEnroll }) {
-  // programId is the canonical backend field; fall back to id for safety
-  const pid = program.programId || program.id
+  const pid      = program.programId || program.id
+  const catKey   = program.category || ''
+  const catColor = CATEGORY_COLORS[catKey] || 'text-brand-400 bg-brand-500/10 border-brand-500/30'
+  const emoji    = CATEGORY_ICONS[catKey] || '📋'
 
   return (
     <motion.div
@@ -33,42 +41,38 @@ function ProgramCard({ program, index, onEnroll }) {
         program.featured ? 'border-brand-500/30 shadow-brand' : ''
       }`}
     >
-      {/* Featured glow */}
       {program.featured && (
         <div className="absolute inset-0 bg-gradient-to-br from-brand-600/5 to-violet-600/5 pointer-events-none rounded-2xl" />
       )}
 
-      {/* Top badges row */}
+      {/* Top badges */}
       <div className="flex items-start justify-between gap-2">
-        {/* Category badge */}
         {program.category && (
-          <span className={`badge border text-xs ${CATEGORY_COLORS[program.category] || 'text-brand-400 bg-brand-500/10 border-brand-500/30'}`}>
+          <span className={`badge border text-xs ${catColor}`}>
             {program.category}
           </span>
         )}
-        {/* Featured / Popular badge */}
-        {program.badge && (
+        {program.featured && (
           <span className="badge-brand text-xs ml-auto flex-shrink-0 flex items-center gap-1">
-            {program.featured && <Star className="w-3 h-3 fill-current" />}
-            {program.badge}
+            <Star className="w-3 h-3 fill-current" /> Most Popular
           </span>
         )}
       </div>
 
-      {/* Icon + title */}
+      {/* Emoji + Title */}
       <div className="flex items-start gap-4">
         <div className="w-12 h-12 rounded-xl bg-brand-600/20 border border-brand-600/30 flex items-center justify-center text-2xl flex-shrink-0 group-hover:bg-brand-600/30 transition-colors">
-          {ICON_MAP[program.icon] || '🤖'}
+          {emoji}
         </div>
         <div>
           <h3 className="font-bold text-lg leading-snug">{program.title}</h3>
           <div className="flex items-center gap-3 mt-1 text-sm text-white/50">
             <span className="flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5" /> {program.duration}
+              <Clock className="w-3.5 h-3.5" /> {program.duration || '—'}
             </span>
-            {program.tag && (
+            {program.featured && (
               <span className="flex items-center gap-1 text-brand-400">
-                <Sparkles className="w-3.5 h-3.5" /> {program.tag}
+                <Sparkles className="w-3.5 h-3.5" /> Recommended
               </span>
             )}
           </div>
@@ -76,7 +80,9 @@ function ProgramCard({ program, index, onEnroll }) {
       </div>
 
       {/* Description */}
-      <p className="text-sm text-white/60 leading-relaxed">{program.description}</p>
+      {program.description && (
+        <p className="text-sm text-white/60 leading-relaxed">{program.description}</p>
+      )}
 
       {/* Highlights */}
       <ul className="flex flex-col gap-2">
@@ -108,13 +114,13 @@ function ProgramCard({ program, index, onEnroll }) {
 }
 
 export default function Programs({ session }) {
-  const [programs,   setPrograms]   = useState([])
-  const [loading,    setLoading]    = useState(true)
-  const [enrolling,  setEnrolling]  = useState(null)
+  const [programs,  setPrograms]  = useState([])
+  const [loading,   setLoading]   = useState(true)
+  const [enrolling, setEnrolling] = useState(null)
 
   useEffect(() => {
     getPrograms()
-      .then(r => { if (r.success) setPrograms(r.programs || []) })
+      .then(r => { if (r.success) setPrograms(r.data || r.programs || []) })
       .catch(() => {})
       .finally(() => setLoading(false))
   }, [])
@@ -131,7 +137,7 @@ export default function Programs({ session }) {
             viewport={{ once: true }}
             className="section-tag mb-4"
           >
-            <Sparkles className="w-3.5 h-3.5" /> Mentorship Programs
+            <Sparkles className="w-3.5 h-3.5" /> Consulting Packages
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -140,8 +146,8 @@ export default function Programs({ session }) {
             transition={{ delay: 0.1 }}
             className="section-heading mb-4"
           >
-            Choose Your{' '}
-            <span className="gradient-text">Accelerator Track</span>
+            Study Abroad{' '}
+            <span className="gradient-text">Consulting Packages</span>
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -150,14 +156,14 @@ export default function Programs({ session }) {
             transition={{ delay: 0.2 }}
             className="text-white/50 max-w-xl mx-auto text-balance"
           >
-            Each program is crafted with FAANG engineers and senior AI leaders — updated every quarter to reflect real interview trends.
+            End-to-end support packages for visa consulting, IELTS/GRE coaching, university admissions, SOP writing, and scholarship assistance.
           </motion.p>
         </div>
 
         {/* Grid */}
         {loading ? (
           <div className="flex items-center justify-center py-24 text-white/40">
-            <Loader2 className="w-8 h-8 animate-spin mr-3" /> Loading programs…
+            <Loader2 className="w-8 h-8 animate-spin mr-3" /> Loading packages…
           </div>
         ) : (
           <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
@@ -173,7 +179,6 @@ export default function Programs({ session }) {
         )}
       </div>
 
-      {/* Booking modal */}
       {enrolling && (
         <BookingModal
           program={enrolling}

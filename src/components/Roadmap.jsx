@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Route, CheckCircle2, Circle, ChevronDown, Loader2, Briefcase } from 'lucide-react'
+import { Route, CheckCircle2, Circle, ChevronDown, Loader2, Globe } from 'lucide-react'
 import { getRoadmaps, getRoadmapSteps } from '../api.js'
 
 // Group steps by phase
 function groupByPhase(steps) {
   const map = {}
   steps.forEach(step => {
-    const phase = step.phase || `Week ${step.week || '?'}`
+    const phase = step.phase || `Phase ${step.week || '?'}`
     if (!map[phase]) map[phase] = []
     map[phase].push(step)
   })
@@ -16,7 +16,6 @@ function groupByPhase(steps) {
 
 function StepNode({ step, index, isLast }) {
   const [open, setOpen] = useState(false)
-  // Support both completed (backend) and done (legacy)
   const isDone = step.completed ?? step.done ?? false
 
   return (
@@ -55,9 +54,7 @@ function StepNode({ step, index, isLast }) {
         >
           <div className="flex items-center justify-between gap-3">
             <div>
-              <div className="flex items-center gap-2 mb-0.5">
-                {isDone && <span className="badge-brand text-xs">Completed</span>}
-              </div>
+              {isDone && <span className="badge-brand text-xs mb-1 inline-block">Completed</span>}
               <h4 className={`font-semibold text-sm sm:text-base ${isDone ? 'text-brand-300' : 'text-white'}`}>
                 {step.title}
               </h4>
@@ -72,7 +69,7 @@ function StepNode({ step, index, isLast }) {
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
-                exit={{   height: 0, opacity: 0 }}
+                exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.2 }}
                 className="overflow-hidden"
               >
@@ -103,7 +100,6 @@ function PhaseGroup({ phase, steps, phaseIndex }) {
       transition={{ delay: phaseIndex * 0.08 }}
       className="mb-8"
     >
-      {/* Phase header */}
       <div className="flex items-center gap-3 mb-4">
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-600/20 border border-brand-600/30 text-xs font-semibold text-brand-300">
           {phase}
@@ -112,7 +108,6 @@ function PhaseGroup({ phase, steps, phaseIndex }) {
         <span className="text-xs text-white/30">{doneInPhase}/{steps.length}</span>
       </div>
 
-      {/* Steps */}
       <div className="flex flex-col pl-2">
         {steps.map((step, i) => (
           <StepNode
@@ -137,9 +132,10 @@ export default function Roadmap() {
   useEffect(() => {
     getRoadmaps()
       .then(r => {
-        if (r.success && r.roadmaps?.length) {
-          setRoadmaps(r.roadmaps)
-          setActiveRm(r.roadmaps[0])
+        const list = r.data || r.roadmaps || []
+        if (r.success && list.length) {
+          setRoadmaps(list)
+          setActiveRm(list[0])
         }
       })
       .catch(() => {})
@@ -149,9 +145,8 @@ export default function Roadmap() {
   useEffect(() => {
     if (!activeRm) return
     setLoadingSteps(true)
-    // Use roadmapId (backend canonical) with fallback to id
     getRoadmapSteps({ roadmapId: activeRm.roadmapId || activeRm.id })
-      .then(r => { if (r.success) setSteps(r.steps || []) })
+      .then(r => { if (r.success) setSteps(r.data || r.steps || []) })
       .catch(() => {})
       .finally(() => setLoadingSteps(false))
   }, [activeRm])
@@ -161,7 +156,6 @@ export default function Roadmap() {
 
   return (
     <section id="roadmap" className="py-24 relative overflow-hidden">
-      {/* BG accent */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-brand-950/20 to-transparent pointer-events-none" />
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -174,7 +168,7 @@ export default function Roadmap() {
             viewport={{ once: true }}
             className="section-tag mb-4"
           >
-            <Route className="w-3.5 h-3.5" /> Career Roadmaps
+            <Route className="w-3.5 h-3.5" /> Admission Roadmap
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -183,7 +177,7 @@ export default function Roadmap() {
             transition={{ delay: 0.1 }}
             className="section-heading mb-4"
           >
-            Your FAANG <span className="gradient-text">Preparation Journey</span>
+            Your Study Abroad <span className="gradient-text">Roadmap</span>
           </motion.h2>
           <motion.p
             initial={{ opacity: 0 }}
@@ -192,7 +186,7 @@ export default function Roadmap() {
             transition={{ delay: 0.2 }}
             className="text-white/50 max-w-lg mx-auto"
           >
-            Phase-by-phase roadmaps built by FAANG engineers to take you from foundations to offer letter.
+            Phase-by-phase guidance built by our counselors — from choosing a country to landing your student visa.
           </motion.p>
         </div>
 
@@ -200,8 +194,8 @@ export default function Roadmap() {
         {!loadingRms && roadmaps.length > 1 && (
           <div className="flex flex-wrap gap-2 justify-center mb-10">
             {roadmaps.map(rm => {
-              const rid = rm.roadmapId || rm.id
-              const label = rm.role ? `${rm.role} (${rm.duration || rm.weeks + 'W'})` : rm.title
+              const rid   = rm.roadmapId || rm.id
+              const label = rm.title || rm.role || 'Roadmap'
               return (
                 <button
                   key={rid}
@@ -212,7 +206,7 @@ export default function Roadmap() {
                       : 'glass text-white/60 hover:text-white hover:border-brand-500/30'
                   }`}
                 >
-                  <Briefcase className="w-3.5 h-3.5 inline mr-1.5 opacity-70" />
+                  <Globe className="w-3.5 h-3.5 inline mr-1.5 opacity-70" />
                   {label}
                 </button>
               )

@@ -6,15 +6,15 @@ import { chat } from '../api.js'
 const WELCOME = {
   id:   'welcome',
   role: 'bot',
-  text: "Hi! I'm NeuralPath's AI career mentor 🤖\n\nAsk me about FAANG prep, mentorship programs, mock interviews, GenAI coaching, or AI career roadmaps!",
+  text: "Hi! I'm the GlobalPath AI Study Abroad Advisor 🌍\n\nAsk me about university admissions, visa processes, IELTS/GRE prep, SOPs, scholarships, or study costs for any country!",
 }
 
 const QUICK_PROMPTS = [
-  'How do mock interviews work?',
-  'Explain FAANG mentorship',
-  'What is in the GenAI coaching?',
-  'Show AI career roadmaps',
-  'Explain ML system design prep',
+  'Which country is best for MS in Computer Science?',
+  'Explain Canada student visa process',
+  'IELTS vs TOEFL — which should I take?',
+  'How to write a strong SOP?',
+  'What scholarships are available in Germany?',
 ]
 
 function Bubble({ msg }) {
@@ -22,7 +22,7 @@ function Bubble({ msg }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0  }}
+      animate={{ opacity: 1, y: 0 }}
       className={`flex items-end gap-2 ${isBot ? 'justify-start' : 'justify-end'}`}
     >
       {isBot && (
@@ -70,18 +70,17 @@ export default function Chatbot({ session }) {
 
     try {
       const history = messages.slice(-8).map(m => ({ role: m.role, text: m.text }))
-      const res     = await chat({ userId: session?.userId || '', message: userMsg, history })
-      const botBubble = {
+      const res     = await chat({ message: userMsg, history })
+      setMessages(prev => [...prev, {
         id:   Date.now() + 1,
         role: 'bot',
-        text: res.reply || "Let me look into that for you!",
-      }
-      setMessages(prev => [...prev, botBubble])
+        text: res.reply || res.message || "I'm looking into that for you! For immediate help, book a free consultation with our counselors.",
+      }])
     } catch {
       setMessages(prev => [...prev, {
         id:   Date.now() + 1,
         role: 'bot',
-        text: "Sorry, I'm having trouble connecting right now. Please try again or email us at support@neuralpath.ai",
+        text: "Sorry, I'm having trouble connecting right now. Please try again or email us at " + (window?.__GP_EMAIL__ || 'support@globalpath.in'),
       }])
     } finally {
       setLoading(false)
@@ -108,7 +107,7 @@ export default function Chatbot({ session }) {
                    flex items-center justify-center
                    shadow-brand-lg hover:shadow-[0_8px_50px_rgba(124,58,237,0.7)]
                    transition-all duration-300 active:scale-95"
-        aria-label="Toggle AI mentor chat"
+        aria-label="Toggle GlobalPath advisor"
       >
         <AnimatePresence mode="wait">
           {open
@@ -148,12 +147,12 @@ export default function Chatbot({ session }) {
               </div>
               <div>
                 <div className="text-sm font-semibold flex items-center gap-1.5">
-                  NeuralPath AI Mentor
+                  GlobalPath AI Advisor
                   <Sparkles className="w-3.5 h-3.5 text-brand-400" />
                 </div>
                 <div className="flex items-center gap-1.5 text-xs text-white/40">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
-                  Online · FAANG Career Advisor
+                  Online · Study Abroad Expert
                 </div>
               </div>
             </div>
@@ -204,7 +203,7 @@ export default function Chatbot({ session }) {
                   value={input}
                   onChange={e => setInput(e.target.value)}
                   onKeyDown={onKeyDown}
-                  placeholder="Ask about FAANG prep, roadmaps, pricing…"
+                  placeholder="Ask about visas, universities, IELTS…"
                   rows={1}
                   className="flex-1 bg-transparent text-sm text-white placeholder-white/30 resize-none focus:outline-none leading-relaxed max-h-24 no-scrollbar"
                 />

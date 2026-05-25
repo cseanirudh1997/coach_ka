@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Star, Quote, Loader2, ChevronLeft, ChevronRight } from 'lucide-react'
 import { getTestimonials } from '../api.js'
-import { initials } from '../utils.js'
+import { initials, countryFlag } from '../utils.js'
 
 function StarRating({ rating }) {
   return (
@@ -19,23 +19,27 @@ function StarRating({ rating }) {
 
 function TestimonialCard({ t }) {
   // Backend fields: name | company | review | rating
-  // Support legacy fields (quote/role) as fallback for graceful degradation
   const displayName    = t.name    || 'Anonymous'
-  const displayCompany = t.company || t.role || ''
+  const displayCompany = t.company || t.university || t.role || ''
   const displayReview  = t.review  || t.quote || ''
   const displayRating  = t.rating  || 5
+  const displayCountry = t.country || ''
+  const flag           = displayCountry ? countryFlag(displayCountry) : ''
 
   return (
     <div className="glass p-6 flex flex-col gap-4 h-full min-w-[300px] max-w-sm mx-4 flex-shrink-0 hover:border-brand-500/30 transition-all duration-300">
       <Quote className="w-8 h-8 text-brand-500/40 flex-shrink-0" />
       <p className="text-white/70 text-sm leading-relaxed flex-1">"{displayReview}"</p>
       <div className="flex items-center gap-3 pt-3 border-t border-white/10">
-        {/* Avatar — initials */}
+        {/* Avatar */}
         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-600 to-violet-700 flex items-center justify-center text-sm font-bold text-white flex-shrink-0">
           {initials(displayName)}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="font-semibold text-sm truncate">{displayName}</div>
+          <div className="font-semibold text-sm truncate">
+            {displayName}
+            {flag && <span className="ml-1.5">{flag}</span>}
+          </div>
           {displayCompany && (
             <div className="text-xs text-white/50 truncate">{displayCompany}</div>
           )}
@@ -53,7 +57,7 @@ export default function Testimonials() {
 
   useEffect(() => {
     getTestimonials()
-      .then(r => { if (r.success) setTestimonials(r.testimonials || []) })
+      .then(r => { if (r.success) setTestimonials(r.data || r.testimonials || []) })
       .catch(() => {})
       .finally(() => setLoading(false))
   }, [])
@@ -88,7 +92,8 @@ export default function Testimonials() {
             transition={{ delay: 0.1 }}
             className="section-heading mb-4"
           >
-            Engineers Who <span className="gradient-text">Made It to FAANG</span>
+            Students Who{' '}
+            <span className="gradient-text">Made It Abroad</span>
           </motion.h2>
           <motion.p
             initial={{ opacity: 0 }}
@@ -97,7 +102,7 @@ export default function Testimonials() {
             transition={{ delay: 0.2 }}
             className="text-white/50 max-w-lg mx-auto"
           >
-            Real results from real engineers. Join 1,200+ AI professionals who transformed their careers with NeuralPath.
+            Real results from real students. Join 15,000+ aspirants who launched their global education journey with GlobalPath.
           </motion.p>
         </div>
 
@@ -109,7 +114,6 @@ export default function Testimonials() {
           <>
             {/* Carousel */}
             <div className="relative">
-              {/* Fade masks */}
               <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-surface-950 to-transparent z-10 pointer-events-none" />
               <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-surface-950 to-transparent z-10 pointer-events-none" />
 
@@ -154,25 +158,25 @@ export default function Testimonials() {
           <div className="text-center">
             <div className="text-5xl font-bold gradient-text">4.9</div>
             <div className="flex justify-center mt-1 mb-1"><StarRating rating={5} /></div>
-            <div className="text-xs text-white/40">Overall Rating</div>
+            <div className="text-xs text-white/40">Counselor Rating</div>
           </div>
           <div className="w-px h-16 bg-white/10 hidden sm:block" />
           <div className="grid grid-cols-2 gap-4 text-center">
             <div>
-              <div className="text-2xl font-bold text-white">1,284</div>
-              <div className="text-xs text-white/40">Engineers Placed</div>
+              <div className="text-2xl font-bold text-white">15K+</div>
+              <div className="text-xs text-white/40">Students Guided</div>
             </div>
             <div>
               <div className="text-2xl font-bold text-white">94%</div>
-              <div className="text-xs text-white/40">Placement Rate</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-white">3.2x</div>
-              <div className="text-xs text-white/40">Avg Salary Hike</div>
+              <div className="text-xs text-white/40">Visa Success</div>
             </div>
             <div>
               <div className="text-2xl font-bold text-white">50+</div>
-              <div className="text-xs text-white/40">Partner Companies</div>
+              <div className="text-xs text-white/40">Universities</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-white">7</div>
+              <div className="text-xs text-white/40">Countries</div>
             </div>
           </div>
         </motion.div>

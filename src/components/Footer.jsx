@@ -1,45 +1,46 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Zap, Twitter, Linkedin, Youtube, Github, Mail, MessageCircle } from 'lucide-react'
+import { Globe, Twitter, Linkedin, Youtube, Mail, MessageCircle, Instagram } from 'lucide-react'
 import CONFIG from '../config.js'
 
 const LINKS = {
-  Platform: [
-    { label: 'Programs',    href: '#programs'     },
-    { label: 'Sessions',    href: '#sessions'     },
-    { label: 'Roadmaps',   href: '#roadmap'       },
-    { label: 'AI Insights', href: '#insights'     },
-    { label: 'Resources',   href: '#resources'    },
+  Services: [
+    { label: 'Visa Consulting',       href: '#visa'         },
+    { label: 'University Admissions', href: '#universities' },
+    { label: 'IELTS / GRE Prep',     href: '#exams'        },
+    { label: 'SOP & LOR Support',    href: '#programs'     },
+    { label: 'Scholarship Guidance', href: '#programs'     },
   ],
-  Company: [
-    { label: 'About',       href: '#'             },
-    { label: 'Blog',        href: '#'             },
-    { label: 'Careers',     href: '#'             },
-    { label: 'Contact',     href: '#contact'      },
+  Destinations: [
+    { label: 'Canada',          href: '#countries' },
+    { label: 'United Kingdom',  href: '#countries' },
+    { label: 'Australia',       href: '#countries' },
+    { label: 'Germany',         href: '#countries' },
+    { label: 'United States',   href: '#countries' },
   ],
-  Legal: [
-    { label: 'Privacy Policy',   href: '#' },
-    { label: 'Terms of Service', href: '#' },
-    { label: 'Refund Policy',    href: '#' },
+  Resources: [
+    { label: 'SOP Templates',    href: '#resources'   },
+    { label: 'Visa Checklists',  href: '#visa'        },
+    { label: 'IELTS Guides',     href: '#resources'   },
+    { label: 'Webinars',         href: '#webinars'    },
+    { label: 'Contact Us',       href: '#contact'     },
   ],
 }
 
 export default function Footer() {
-  const year   = new Date().getFullYear()
-  const config = CONFIG
+  const year = new Date().getFullYear()
 
   const SOCIAL = [
-    { icon: Twitter,        href: '#',                           label: 'Twitter'   },
-    { icon: Linkedin,       href: config.linkedinPage  || '#',   label: 'LinkedIn'  },
-    { icon: Youtube,        href: config.youtubeChannel || '#',  label: 'YouTube'   },
-    { icon: MessageCircle,  href: config.whatsappLink  || '#',   label: 'WhatsApp'  },
-    { icon: Github,         href: '#',                           label: 'GitHub'    },
+    { icon: Twitter,       href: CONFIG.socialLinks?.twitter   || '#', label: 'Twitter'   },
+    { icon: Linkedin,      href: CONFIG.socialLinks?.linkedin  || '#', label: 'LinkedIn'  },
+    { icon: Youtube,       href: CONFIG.socialLinks?.youtube   || '#', label: 'YouTube'   },
+    { icon: Instagram,     href: CONFIG.socialLinks?.instagram || '#', label: 'Instagram' },
+    { icon: MessageCircle, href: CONFIG.whatsappLink           || '#', label: 'WhatsApp'  },
   ]
 
   function scrollTo(href) {
     if (href.startsWith('#') && href.length > 1) {
-      const el = document.querySelector(href)
-      el?.scrollIntoView({ behavior: 'smooth' })
+      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
     }
   }
 
@@ -52,19 +53,18 @@ export default function Footer() {
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center gap-2 mb-4 group">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-brand group-hover:shadow-brand-lg transition-shadow">
-                <Zap className="w-4 h-4 text-white" fill="currentColor" />
+                <Globe className="w-4 h-4 text-white" />
               </div>
               <span className="font-bold text-lg tracking-tight">
-                Neural<span className="text-brand-400">Path</span>
+                Global<span className="text-brand-400">Path</span>
               </span>
             </Link>
             <p className="text-sm text-white/40 max-w-xs leading-relaxed mb-3">
-              The premium AI &amp; ML career accelerator trusted by 1,200+ engineers.
-              From foundations to FAANG — we guide you every step of the way.
+              Premium study abroad counseling, visa guidance, and IELTS/GRE preparation for ambitious students. Trusted by 15,000+ students across India.
             </p>
             <div className="flex items-center gap-1.5 text-xs text-white/30 mb-6">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block flex-shrink-0" />
-              94% placement rate · 1,284 engineers placed · 4.9★ avg rating
+              94% visa success rate · 15,000+ students guided · 4.9★ avg rating
             </div>
             <div className="flex items-center gap-2">
               {SOCIAL.map(s => (
@@ -105,7 +105,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="mt-12 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-white/30">
-            © {year} NeuralPath Technologies Pvt. Ltd. All rights reserved.
+            © {year} GlobalPath Study Abroad Pvt. Ltd. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1.5 text-xs text-white/30">
@@ -114,15 +114,13 @@ export default function Footer() {
                 {CONFIG.supportEmail}
               </a>
             </div>
-            {CONFIG.whatsappLink && (
+            {CONFIG.supportPhone && (
               <a
-                href={CONFIG.whatsappLink}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={`tel:${CONFIG.supportPhone}`}
                 className="flex items-center gap-1.5 text-xs text-white/30 hover:text-emerald-400 transition-colors"
               >
                 <MessageCircle className="w-3.5 h-3.5" />
-                WhatsApp Support
+                {CONFIG.supportPhone}
               </a>
             )}
           </div>

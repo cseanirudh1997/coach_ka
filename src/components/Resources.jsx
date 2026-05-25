@@ -11,7 +11,7 @@ const TYPE_ICONS = {
   PPT:   <FileText className="w-4 h-4 text-orange-400" />,
 }
 
-const CATEGORIES = ['All', 'Interview Prep', 'GenAI', 'System Design', 'Coding', 'Career', 'Data Science']
+const CATEGORIES = ['All', 'SOP Templates', 'Visa Checklists', 'IELTS Guides', 'GRE Prep', 'University Lists', 'Scholarship']
 
 const TIER_ORDER = ['free', 'basic', 'premium', 'enterprise']
 
@@ -20,17 +20,14 @@ function tierRank(tier) {
 }
 
 function userHasAccess(userTier, resourceTier) {
-  // A user can access a resource if their tier rank >= resource tier rank
   return tierRank(userTier || 'free') >= tierRank(resourceTier || 'free')
 }
 
 function ResourceCard({ resource, index, session }) {
-  // Use resourceId (backend canonical), fall back to id
-  const rid    = resource.resourceId || resource.id
-  // Use resourceUrl (backend canonical), fall back to url
-  const url    = resource.resourceUrl || resource.url
-  const isPremium = (resource.tier || 'free') !== 'free'
-  const hasAccess = userHasAccess(session?.tier, resource.tier)
+  const rid        = resource.resourceId || resource.id
+  const url        = resource.resourceUrl || resource.url
+  const isPremium  = (resource.tier || 'free') !== 'free'
+  const hasAccess  = userHasAccess(session?.tier, resource.tier)
 
   function handleDownload(e) {
     if (!hasAccess) {
@@ -38,9 +35,7 @@ function ResourceCard({ resource, index, session }) {
       if (!session) {
         toast.error('Please login to access resources.')
       } else {
-        toast.error(`Upgrade to ${resource.tier} to access this resource.`, {
-          icon: '🔒',
-        })
+        toast.error(`Upgrade to ${resource.tier} to access this resource.`, { icon: '🔒' })
       }
     }
   }
@@ -115,8 +110,8 @@ export default function Resources({ session }) {
   const [filter,    setFilter]    = useState('All')
 
   useEffect(() => {
-    getMentorResources({})
-      .then(r => { if (r.success) setResources(r.resources || []) })
+    getMentorResources()
+      .then(r => { if (r.success) setResources(r.data || r.resources || []) })
       .catch(() => {})
       .finally(() => setLoading(false))
   }, [])
@@ -140,7 +135,7 @@ export default function Resources({ session }) {
             viewport={{ once: true }}
             className="section-tag mb-4"
           >
-            <BookOpen className="w-3.5 h-3.5" /> Resources
+            <BookOpen className="w-3.5 h-3.5" /> Resource Library
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -149,7 +144,8 @@ export default function Resources({ session }) {
             transition={{ delay: 0.1 }}
             className="section-heading mb-4"
           >
-            FAANG-Grade <span className="gradient-text">Resource Library</span>
+            Study Abroad{' '}
+            <span className="gradient-text">Resource Library</span>
           </motion.h2>
           <motion.p
             initial={{ opacity: 0 }}
@@ -158,14 +154,14 @@ export default function Resources({ session }) {
             transition={{ delay: 0.2 }}
             className="text-white/50 max-w-lg mx-auto"
           >
-            Curated interview guides, system design templates, GenAI cheatsheets, and AI career resources.
+            SOP templates, visa checklists, IELTS guides, GRE prep materials, and university shortlists.
             {premiumCount > 0 && (
               <> <span className="text-amber-400 font-medium">{freeCount} free</span> · <span className="text-amber-400 font-medium">{premiumCount} premium</span>.</>
             )}
           </motion.p>
         </div>
 
-        {/* Filters */}
+        {/* Category filters */}
         <div className="flex flex-wrap gap-2 justify-center mb-10">
           {CATEGORIES.map(cat => (
             <button
@@ -215,7 +211,7 @@ export default function Resources({ session }) {
             <Crown className="w-8 h-8 text-amber-400 mx-auto mb-3" />
             <h3 className="font-bold text-lg mb-2">Unlock Premium Resources</h3>
             <p className="text-white/50 text-sm mb-4">
-              Sign up and enroll in a program to access {premiumCount} premium resources including live recordings, behavioral playbooks, and more.
+              Sign up and enrol in a package to access {premiumCount} premium resources including personalised SOP templates, visa checklists, and more.
             </p>
             <a href="/signup" className="btn-brand inline-flex">
               Get Free Access <Crown className="w-4 h-4 ml-1" />
