@@ -21,7 +21,7 @@ export default function Home({ session, setSession }) {
         <Programs    session={session} />
         <Sessions    session={session} />
         <Roadmap     />
-        <AIInsights  />
+        <AIInsights  session={session} />
         <Testimonials />
         <Resources   session={session} />
         <Contact     />

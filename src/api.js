@@ -144,12 +144,9 @@ export async function getSessions() {
 
 // ─── Bookings ─────────────────────────────────────────────────────────────────
 
+// Bookings sheet columns: bookingId | username | userId | sessionId | programId | preferredDate | preferredTime | notes | coupon | status | createdAt
 export async function createBooking({ username, userId, sessionId, programId, preferredDate, preferredTime, notes, coupon }) {
-  try {
-    return await post({ action: 'createBooking', username, userId, sessionId, programId, preferredDate, preferredTime, notes, coupon })
-  } catch {
-    return { success: true, bookingId: `BK-${Date.now()}`, message: 'Booking confirmed!' }
-  }
+  return await post({ action: 'createBooking', username, userId, sessionId, programId, preferredDate, preferredTime, notes, coupon })
 }
 
 export async function getBookings({ userId, username }) {
