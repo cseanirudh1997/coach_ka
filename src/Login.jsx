@@ -29,9 +29,23 @@ export default function Login({ setSession: setGlobalSession }) {
         toast.error(res.message || 'Login failed. Check your credentials.')
         return
       }
-      setSession(res)
-      setGlobalSession(res)
-      toast.success(`Welcome back, ${res.name || 'there'}!`)
+
+      // Normalise session object to include all UserAccess fields
+      const session = {
+        userId:          res.userId || res.username || form.email.split('@')[0],
+        username:        res.username || form.email.split('@')[0],
+        name:            res.name || form.email.split('@')[0],
+        email:           res.email || form.email.trim(),
+        phone:           res.phone || '',
+        role:            res.role || 'student',
+        tier:            res.tier || 'free',
+        onboardingStage: res.onboardingStage || 'active',
+        token:           res.token || '',
+      }
+
+      setSession(session)
+      setGlobalSession(session)
+      toast.success(`Welcome back, ${session.name}! 🚀`)
       navigate(from, { replace: true })
     } catch {
       toast.error('Something went wrong. Please try again.')
@@ -44,6 +58,8 @@ export default function Login({ setSession: setGlobalSession }) {
     <div className="min-h-screen flex items-center justify-center px-4 py-16">
       {/* Background */}
       <div className="absolute inset-0 mesh-gradient pointer-events-none" />
+      <div className="absolute top-1/3 -left-32 w-72 h-72 bg-brand-700/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/3 -right-32 w-64 h-64 bg-violet-700/15 rounded-full blur-3xl pointer-events-none" />
 
       <motion.div
         initial={{ opacity: 0, y: 30 }}
@@ -64,7 +80,7 @@ export default function Login({ setSession: setGlobalSession }) {
           {/* Header */}
           <div className="h-1 -mx-8 -mt-8 mb-8 bg-gradient-to-r from-brand-600 via-violet-400 to-brand-600 rounded-t-2xl" />
           <h1 className="text-2xl font-bold mb-1">Welcome back</h1>
-          <p className="text-sm text-white/50 mb-8">Sign in to continue your AI career journey.</p>
+          <p className="text-sm text-white/50 mb-8">Continue your AI career transformation.</p>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             {/* Email */}

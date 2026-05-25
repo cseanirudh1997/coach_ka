@@ -1,11 +1,11 @@
 import React from 'react'
-import { motion } from 'framer-motion'
 import Navbar       from './components/Navbar.jsx'
 import Hero         from './components/Hero.jsx'
 import Programs     from './components/Programs.jsx'
 import Sessions     from './components/Sessions.jsx'
 import Roadmap      from './components/Roadmap.jsx'
 import Testimonials from './components/Testimonials.jsx'
+import AIInsights   from './components/AIInsights.jsx'
 import Resources    from './components/Resources.jsx'
 import Contact      from './components/Contact.jsx'
 import Footer       from './components/Footer.jsx'
@@ -20,9 +20,10 @@ export default function Home({ session, setSession }) {
         <Hero        session={session} />
         <Programs    session={session} />
         <Sessions    session={session} />
-        <Roadmap     session={session} />
+        <Roadmap     />
+        <AIInsights  />
         <Testimonials />
-        <Resources   />
+        <Resources   session={session} />
         <Contact     />
       </main>
 
