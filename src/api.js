@@ -43,37 +43,11 @@ async function post(payload) {
 // ─── Auth ─────────────────────────────────────────────────────────────────────
 
 export async function signup({ username, name, email, phone, password, goal, role, tier }) {
-  try {
-    return await post({ action: 'signup', username, name, email, phone, password, goal, role, tier })
-  } catch {
-    return {
-      success:  true,
-      message:  'Account created! Please log in.',
-      userId:   `NP-${Date.now()}`,
-      username: username || email.split('@')[0],
-      role:     role || 'student',
-      tier:     tier || 'free',
-      onboardingStage: 'profile',
-    }
-  }
+  return await post({ action: 'signup', username, name, email, phone, password, goal, role, tier })
 }
 
 export async function login({ email, password }) {
-  try {
-    return await post({ action: 'login', email, password })
-  } catch {
-    return {
-      success:         true,
-      userId:          'DEV-001',
-      username:        email.split('@')[0],
-      name:            'Dev User',
-      email,
-      role:            'student',
-      tier:            'free',
-      onboardingStage: 'active',
-      token:           `mock_token_${Date.now()}`,
-    }
-  }
+  return await post({ action: 'login', email, password })
 }
 
 // ─── Programs ────────────────────────────────────────────────────────────────

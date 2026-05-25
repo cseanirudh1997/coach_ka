@@ -5,7 +5,7 @@ import {
   Zap, LayoutDashboard, BookOpen, Calendar, Mic2, FileText,
   Route, Bell, LogOut, TrendingUp, Award, Star,
   ChevronRight, Loader2, CheckCircle2, Circle, ExternalLink,
-  X, Menu, Target, Brain, Code2, Layers, Building2, Crown,
+  X, Menu, Target, Brain, Code2, Layers, Building2, Crown, Home,
 } from 'lucide-react'
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
@@ -596,7 +596,7 @@ export default function Dashboard({ session, setSession: setGlobalSession }) {
   const activeLabel = SIDEBAR_ITEMS.find(i => i.key === activePanel)?.label || 'Dashboard'
 
   return (
-    <div className="min-h-screen flex bg-surface-950">
+    <div className="h-screen flex overflow-hidden bg-surface-950">
 
       {/* ── Sidebar ── */}
       <>
@@ -614,11 +614,8 @@ export default function Dashboard({ session, setSession: setGlobalSession }) {
           )}
         </AnimatePresence>
 
-        <motion.aside
-          initial={false}
-          animate={{ x: sidebarOpen ? 0 : -280 }}
-          className="fixed inset-y-0 left-0 z-40 w-64 bg-surface-900/95 backdrop-blur-xl border-r border-white/10 flex flex-col lg:translate-x-0 lg:static lg:z-auto"
-          style={{ willChange: 'transform' }}
+        <aside
+          className={`fixed inset-y-0 left-0 z-40 w-64 flex flex-col bg-surface-900/95 backdrop-blur-xl border-r border-white/10 transition-transform duration-300 ease-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:static lg:inset-auto lg:translate-x-0 lg:z-auto lg:flex-shrink-0`}
         >
           {/* Logo */}
           <div className="flex items-center gap-2 px-6 py-5 border-b border-white/10">
@@ -707,7 +704,7 @@ export default function Dashboard({ session, setSession: setGlobalSession }) {
               <LogOut className="w-4 h-4" /> Logout
             </button>
           </div>
-        </motion.aside>
+        </aside>
       </>
 
       {/* ── Main content ── */}
@@ -730,8 +727,15 @@ export default function Dashboard({ session, setSession: setGlobalSession }) {
                 {progress.targetCompany}
               </span>
             )}
+            <Link
+              to="/"
+              title="Back to site"
+              className="p-2 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-all"
+            >
+              <Home className="w-5 h-5" />
+            </Link>
             <button
-              onClick={() => setActivePanel('notifications')}
+              onClick={() => setActivePanel(p => p === 'notifications' ? 'overview' : 'notifications')}
               className="relative p-2 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-all"
             >
               <Bell className="w-5 h-5" />
