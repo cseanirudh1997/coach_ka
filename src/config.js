@@ -5,15 +5,9 @@
  * Example: https://script.google.com/macros/s/<DEPLOYMENT_ID>/exec
  */
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || '__SET_BACKEND_URL__'
+const GAS_BACKEND = 'https://script.google.com/macros/s/AKfycbzQ6ONQ0km56MOsHaFbNzYXWZcb40So_BNSTEz0j9DMTvjCzgDic6Q_FaYvNpjY93E/exec'
 
-if (BACKEND_URL === '__SET_BACKEND_URL__') {
-  console.warn(
-    '[NeuralPath] ⚠️  Backend URL not configured.\n' +
-    'Set VITE_BACKEND_URL in your .env file or replace the placeholder in src/config.js.\n' +
-    'API calls will use mock fallback data until a real URL is provided.'
-  )
-}
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || GAS_BACKEND
 
 export const CONFIG = {
   backendUrl:     BACKEND_URL,
