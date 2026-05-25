@@ -1,24 +1,25 @@
 /**
- * NeuralPath — platform configuration
- *
- * Replace BACKEND_URL with your Google Apps Script Web App URL once deployed.
- * Example: https://script.google.com/macros/s/<DEPLOYMENT_ID>/exec
+ * GlobalPath — Study Abroad & Visa Consulting Platform
+ * Central configuration
  */
 
-const GAS_BACKEND = 'https://script.google.com/macros/s/AKfycbzQ6ONQ0km56MOsHaFbNzYXWZcb40So_BNSTEz0j9DMTvjCzgDic6Q_FaYvNpjY93E/exec'
+const GAS_BACKEND =
+  'https://script.google.com/macros/s/AKfycbxMoR1PyeL1xYj102l1G-RApeZ2QAlGzFISMFvl6a8hSa0_q9Nk6ry-wjdy_5LgW5P2/exec'
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || GAS_BACKEND
-
-export const CONFIG = {
-  backendUrl:     BACKEND_URL,
-  platformName:   'NeuralPath',
-  tagline:        'Accelerate Your AI & ML Career Into FAANG-Level Roles',
-  supportEmail:   'support@neuralpath.ai',
-  razorpayKey:    import.meta.env.VITE_RAZORPAY_KEY    || '',
-  sessionKey:     'np_session',
-  whatsappLink:   import.meta.env.VITE_WHATSAPP_LINK   || 'https://wa.me/919999999999',
-  linkedinPage:   import.meta.env.VITE_LINKEDIN_PAGE   || '',
-  youtubeChannel: import.meta.env.VITE_YOUTUBE_CHANNEL || '',
+const CONFIG = {
+  backendUrl:    import.meta.env.VITE_BACKEND_URL || GAS_BACKEND,
+  platformName:  'GlobalPath',
+  tagline:       'Your Global Education Journey Starts Here',
+  sessionKey:    'gp_session',
+  razorpayKey:   import.meta.env.VITE_RAZORPAY_KEY || '',
+  supportEmail:  'support@globalpath.in',
+  supportPhone:  '+91 98765 43210',
+  socialLinks: {
+    twitter:   'https://twitter.com/globalpath',
+    linkedin:  'https://linkedin.com/company/globalpath',
+    youtube:   'https://youtube.com/@globalpath',
+    instagram: 'https://instagram.com/globalpath',
+  },
 }
 
 export default CONFIG

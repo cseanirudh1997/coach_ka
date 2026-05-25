@@ -2,14 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { AnimatePresence } from 'framer-motion'
-
 import { getSession } from './utils.js'
 import Home      from './Home.jsx'
 import Login     from './Login.jsx'
 import Signup    from './Signup.jsx'
 import Dashboard from './Dashboard.jsx'
 
-// ─── Auth Guard ───────────────────────────────────────────────────────────────
 function RequireAuth({ children }) {
   const session = getSession()
   const location = useLocation()
@@ -19,11 +17,9 @@ function RequireAuth({ children }) {
   return children
 }
 
-// ─── App ──────────────────────────────────────────────────────────────────────
 export default function App() {
-  const [session, setSession] = useState(getSession)
+  const [session, setSession] = useState(() => getSession())
 
-  // Keep session state in sync when localStorage changes (other tabs)
   useEffect(() => {
     const onStorage = () => setSession(getSession())
     window.addEventListener('storage', onStorage)
@@ -35,20 +31,24 @@ export default function App() {
       <Toaster
         position="top-right"
         toastOptions={{
+          duration: 4000,
           style: {
-            background: '#18181b',
-            color:      '#fff',
-            border:     '1px solid rgba(124,58,237,0.3)',
+            background:   '#18181b',
+            color:        '#fff',
+            border:       '1px solid rgba(255,255,255,0.1)',
             borderRadius: '12px',
+            fontSize:     '14px',
           },
-          success: { iconTheme: { primary: '#8b5cf6', secondary: '#fff' } },
+          success: { iconTheme: { primary: '#7c3aed', secondary: '#fff' } },
+          error:   { iconTheme: { primary: '#ef4444', secondary: '#fff' } },
         }}
       />
+
       <AnimatePresence mode="wait">
         <Routes>
-          <Route path="/"          element={<Home    session={session} setSession={setSession} />} />
-          <Route path="/login"     element={<Login   setSession={setSession} />} />
-          <Route path="/signup"    element={<Signup  setSession={setSession} />} />
+          <Route path="/"          element={<Home      session={session} setSession={setSession} />} />
+          <Route path="/login"     element={<Login     setSession={setSession} />} />
+          <Route path="/signup"    element={<Signup    setSession={setSession} />} />
           <Route path="/dashboard" element={
             <RequireAuth>
               <Dashboard session={session} setSession={setSession} />

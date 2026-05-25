@@ -1,34 +1,20 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Zap, User, Mail, Phone, Lock, Eye, EyeOff, Loader2, UserPlus, Target } from 'lucide-react'
+import { Globe, User, Mail, Phone, Lock, Eye, EyeOff, Loader2, UserPlus, ArrowLeft, CheckCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { signup } from './api.js'
 import { setSession } from './utils.js'
 
-const GOALS = [
-  'Crack FAANG AI/ML Interview',
-  'Transition to Applied Scientist Role',
-  'Get into GenAI Engineering',
-  'Master ML System Design',
-  'Break into Data Science',
-  'Level up to Senior / Staff IC',
-  'Other',
-]
-
-const TARGET_COMPANIES = [
-  'Google / DeepMind',
-  'Meta / FAIR',
-  'Amazon / AWS AI',
-  'Microsoft / Azure AI',
-  'OpenAI / Anthropic',
-  'Apple',
-  'Other FAANG+',
-  'Top AI Startup',
+const BENEFITS = [
+  'Expert visa & admissions counseling',
+  'IELTS / GRE preparation support',
+  'University shortlisting & SOP guidance',
+  'Real-time application tracking',
 ]
 
 export default function Signup({ setSession: setGlobalSession }) {
-  const [form,    setForm]    = useState({ name: '', email: '', phone: '', password: '', goal: '', targetCompany: '' })
+  const [form,    setForm]    = useState({ username: '', email: '', phone: '', password: '' })
   const [show,    setShow]    = useState(false)
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
@@ -37,52 +23,43 @@ export default function Signup({ setSession: setGlobalSession }) {
 
   async function handleSubmit(e) {
     e.preventDefault()
-    if (!form.name.trim() || !form.email.trim() || !form.password || !form.goal) {
+    const { username, email, password, phone } = form
+    if (!username.trim() || !email.trim() || !password) {
       toast.error('Please fill all required fields.')
       return
     }
-    if (form.password.length < 8) {
+    if (!/^[a-zA-Z0-9_]{3,30}$/.test(username.trim())) {
+      toast.error('Username must be 3–30 characters: letters, numbers, underscores only.')
+      return
+    }
+    if (password.length < 8) {
       toast.error('Password must be at least 8 characters.')
       return
     }
     setLoading(true)
     try {
-      // Derive username from email (before @)
-      const username = form.email.trim().split('@')[0].replace(/[^a-zA-Z0-9_]/g, '_').toLowerCase()
-
       const res = await signup({
-        username,
-        name:          form.name.trim(),
-        email:         form.email.trim(),
-        phone:         form.phone.trim(),
-        password:      form.password,
-        goal:          form.goal,
-        role:          'student',
-        tier:          'free',
+        username: username.trim(),
+        email:    email.trim(),
+        phone:    phone.trim(),
+        password,
       })
-
       if (!res.success) {
         toast.error(res.message || 'Signup failed. Please try again.')
         return
       }
-
-      // Build session object with all UserAccess fields
       const session = {
-        userId:          res.userId || `NP-${Date.now()}`,
-        username:        res.username || username,
-        name:            form.name.trim(),
-        email:           form.email.trim(),
-        phone:           form.phone.trim(),
-        role:            res.role || 'student',
-        tier:            res.tier || 'free',
+        username:        res.username || username.trim(),
+        email:           res.email    || email.trim(),
+        phone:           res.phone    || phone.trim(),
+        role:            res.role     || 'student',
+        tier:            res.tier     || 'free',
         onboardingStage: res.onboardingStage || 'profile',
-        goal:            form.goal,
-        targetCompany:   form.targetCompany,
+        token:           res.token || '',
       }
-
       setSession(session)
       setGlobalSession(session)
-      toast.success('Account created! Welcome to NeuralPath 🎉')
+      toast.success('Account created! Welcome to GlobalPath 🌍🎉')
       navigate('/dashboard', { replace: true })
     } catch {
       toast.error('Something went wrong. Please try again.')
@@ -92,51 +69,58 @@ export default function Signup({ setSession: setGlobalSession }) {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-16">
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden">
       <div className="absolute inset-0 mesh-gradient pointer-events-none" />
-
-      {/* Floating orbs */}
       <div className="absolute top-1/4 -left-32 w-72 h-72 bg-brand-700/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-1/4 -right-32 w-64 h-64 bg-violet-700/15 rounded-full blur-3xl pointer-events-none" />
 
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
         className="relative z-10 w-full max-w-md"
       >
-        {/* Logo */}
-        <Link to="/" className="flex items-center justify-center gap-2 mb-8">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-brand">
-            <Zap className="w-5 h-5 text-white" fill="currentColor" />
+        <Link to="/" className="flex items-center justify-center gap-2.5 mb-8">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-brand">
+            <Globe className="w-5 h-5 text-white" />
           </div>
           <span className="font-bold text-xl tracking-tight">
-            Neural<span className="text-brand-400">Path</span>
+            Global<span className="text-brand-400">Path</span>
           </span>
         </Link>
 
         <div className="glass-heavy p-8 rounded-2xl">
           <div className="h-1 -mx-8 -mt-8 mb-8 bg-gradient-to-r from-brand-600 via-violet-400 to-brand-600 rounded-t-2xl" />
-          <h1 className="text-2xl font-bold mb-1">Start Your FAANG Journey</h1>
-          <p className="text-sm text-white/50 mb-8">Create your free account and begin your AI career transformation.</p>
+          <h1 className="text-2xl font-bold mb-1">Start Your Global Journey</h1>
+          <p className="text-sm text-white/50 mb-6">Create your free account and access expert study abroad counseling.</p>
+
+          <ul className="flex flex-col gap-1.5 mb-6">
+            {BENEFITS.map(b => (
+              <li key={b} className="flex items-center gap-2 text-xs text-white/60">
+                <CheckCircle className="w-3.5 h-3.5 text-brand-400 flex-shrink-0" />
+                {b}
+              </li>
+            ))}
+          </ul>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            {/* Name */}
             <div>
-              <label className="block text-xs text-white/50 mb-1.5">Full Name *</label>
+              <label className="block text-xs text-white/50 mb-1.5">Username *</label>
               <div className="relative">
                 <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
                 <input
                   type="text"
-                  value={form.name}
-                  onChange={e => set('name', e.target.value)}
-                  placeholder="Rahul Verma"
+                  value={form.username}
+                  onChange={e => set('username', e.target.value)}
+                  placeholder="john_doe"
                   className="np-input pl-10"
+                  autoComplete="username"
                   required
                 />
               </div>
+              <p className="text-[11px] text-white/25 mt-1">3–30 chars, letters/numbers/underscores</p>
             </div>
 
-            {/* Email */}
             <div>
               <label className="block text-xs text-white/50 mb-1.5">Email Address *</label>
               <div className="relative">
@@ -145,7 +129,7 @@ export default function Signup({ setSession: setGlobalSession }) {
                   type="email"
                   value={form.email}
                   onChange={e => set('email', e.target.value)}
-                  placeholder="rahul@email.com"
+                  placeholder="john@email.com"
                   className="np-input pl-10"
                   autoComplete="email"
                   required
@@ -153,7 +137,6 @@ export default function Signup({ setSession: setGlobalSession }) {
               </div>
             </div>
 
-            {/* Phone */}
             <div>
               <label className="block text-xs text-white/50 mb-1.5">Phone (WhatsApp)</label>
               <div className="relative">
@@ -168,37 +151,6 @@ export default function Signup({ setSession: setGlobalSession }) {
               </div>
             </div>
 
-            {/* Goal */}
-            <div>
-              <label className="block text-xs text-white/50 mb-1.5">Your Primary Goal *</label>
-              <select
-                value={form.goal}
-                onChange={e => set('goal', e.target.value)}
-                className="np-input"
-                required
-              >
-                <option value="" disabled>Select your career goal…</option>
-                {GOALS.map(g => <option key={g} value={g}>{g}</option>)}
-              </select>
-            </div>
-
-            {/* Target Company */}
-            <div>
-              <label className="block text-xs text-white/50 mb-1.5">
-                <Target className="w-3.5 h-3.5 inline mr-1" />
-                Target Company (optional)
-              </label>
-              <select
-                value={form.targetCompany}
-                onChange={e => set('targetCompany', e.target.value)}
-                className="np-input"
-              >
-                <option value="">Select your target company…</option>
-                {TARGET_COMPANIES.map(c => <option key={c} value={c}>{c}</option>)}
-              </select>
-            </div>
-
-            {/* Password */}
             <div>
               <label className="block text-xs text-white/50 mb-1.5">Password *</label>
               <div className="relative">
@@ -233,15 +185,16 @@ export default function Signup({ setSession: setGlobalSession }) {
 
           <p className="text-center text-sm text-white/40 mt-6">
             Already have an account?{' '}
-            <Link to="/login" className="text-brand-400 hover:text-brand-300 font-medium transition-colors">
-              Sign in
-            </Link>
+            <Link to="/login" className="text-brand-400 hover:text-brand-300 font-medium transition-colors">Sign in</Link>
           </p>
-
           <p className="text-center text-xs text-white/20 mt-4">
             By signing up, you agree to our Terms of Service and Privacy Policy.
           </p>
         </div>
+
+        <Link to="/" className="flex items-center justify-center gap-1.5 mt-6 text-sm text-white/30 hover:text-white/60 transition-colors">
+          <ArrowLeft className="w-3.5 h-3.5" /> Back to home
+        </Link>
       </motion.div>
     </div>
   )
